@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Category, Base, CatalogItem
+from database_setup import Country, Base, CatalogItem
 
 engine = create_engine('sqlite:///catalog.db')
 # Bind the engine to the metadata of the Base class so that the
@@ -18,45 +20,55 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
-# Category for golf
-category1 = Category(name="Golf")
+# Country category for Belgium
+belgium = Country(name="Belgium")
 
-session.add(category1)
-session.commit()
-
-categoryItem2 = CatalogItem(name="Golf clubs",
-    description="Golf clubs include drive, fairway woods, irons, wedges, and putter",
-    category=category1)
-
-session.add(categoryItem2)
-session.commit()
-
-categoryItem1 = CatalogItem(name="Golf Shoes",
-    description="soft spiked shoes for golfing",
-    category=category1)
-
-session.add(categoryItem1)
-session.commit()
-
-# Category for tennis
-category2 = Category(name="Tennis")
-
-session.add(category2)
+session.add(belgium)
 session.commit()
 
 
-categoryItem3 = CatalogItem(name="Tennis Racquet",
-    description="racquet for playing tennis",
-    category=category2)
+# Country category for Portugal
+portugal = Country(name="Portugal")
 
-session.add(categoryItem3)
+session.add(portugal)
 session.commit()
 
-categoryItem4 = CatalogItem(name="Tennis balls",
-    description="balls for playing tennis",
-    category=category2)
+# Country category for Hungary
+hungary = Country(name="Hungary")
 
-session.add(categoryItem4)
+session.add(hungary)
+session.commit()
+
+bruges_city_catalog = CatalogItem(name="Bruges",
+    description="Historic city with canals, beer, chocolate, and waffles",
+    last_update=datetime.now(),
+    country=belgium)
+
+session.add(bruges_city_catalog)
+session.commit()
+
+lisbon_city_catalog = CatalogItem(name="Lisbon",
+    description="Hilly city with trams, pastries, and seafood",
+    last_update=datetime.now(),
+    country=portugal)
+
+session.add(lisbon_city_catalog)
+session.commit()
+
+lagos_city_catalog = CatalogItem(name="Lagos",
+    description="Coastal city with beautiful beaches, hiking, and water sports",
+    last_update=datetime.now(),
+    country=portugal)
+
+session.add(lagos_city_catalog)
+session.commit()
+
+budapest_city_catalog = CatalogItem(name="Budapest",
+    description="Beautiful city with Thermal baths, ruin pubs and castle",
+    last_update=datetime.now(),
+    country=hungary)
+
+session.add(budapest_city_catalog)
 session.commit()
 
 print("added catalog items")

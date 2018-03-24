@@ -1,0 +1,21 @@
+<html>
+
+<body>
+<div class = 'pane'>
+<h1>Countries</h1>
+
+    {% for country in countries %}
+    <a href = "#"> <p>{{country.name}}</p></a>
+    {% endfor %}
+</div>
+<div>
+<h1>Latest Cities Catalog</h1>
+
+    {% for item in items %}
+    <a href = "#"> <p>{{item.name}}</p></a>
+    {% endfor %}
+
+</div>
+</body>
+
+</html>

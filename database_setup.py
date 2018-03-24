@@ -1,6 +1,6 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -8,8 +8,8 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
-class Category(Base):
-    __tablename__ = 'category'
+class Country(Base):
+    __tablename__ = 'country'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
@@ -29,8 +29,9 @@ class CatalogItem(Base):
     name = Column(String(250), nullable=False)
     id = Column(Integer, primary_key=True)
     description = Column(String(500))
-    category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category)
+    last_update = Column(DateTime)
+    country_id = Column(Integer, ForeignKey('country.id'))
+    country = relationship(Country)
 
     @property
     def serialize(self):
@@ -38,6 +39,7 @@ class CatalogItem(Base):
         return {
             'name': self.name,
             'description': self.description,
+            'last_update': self.last_update,
             'id': self.id,
         }
 
