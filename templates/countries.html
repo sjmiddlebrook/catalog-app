@@ -19,7 +19,12 @@
 <header class="navbar navbar-expand navbar-dark justify-content-between bg-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Travel Catalog</a>
+        {% if user %}
+        <button class="btn btn-primary">Logout</button>
+        {% else %}
         <button class="btn btn-primary">Login</button>
+        {% endif %}
+
     </div>
 </header>
 

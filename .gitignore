@@ -1,3 +1,5 @@
 .idea/
 __pycache__/
 catalog.db
+client_secrets.json
+database_setup.pyc
