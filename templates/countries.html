@@ -1,19 +1,8 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description"
-          content="Travel destination catalog with cities and descriptions">
-    <title>Travel Catalog</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
-          integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-    <!-- Custom CSS -->
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-    <!-- Font Awesome -->
-    <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-</head>
-<body class="bg-light">
+{% extends "layout.html" %}
+
+{% block title %}Travel Catalog{% endblock %}
+
+{% block content %}
 
 <header class="navbar navbar-expand navbar-dark justify-content-between bg-dark">
     <div class="container">
@@ -42,14 +31,24 @@
     {% endwith %}
     <div class="row">
         <div class="col-md-6" align="center">
-        <h1>Countries</h1>
+
+            {% if user %}
+            <a href="{{ url_for('add_country') }}"><button class="btn btn-success">Add New Country</button></a>
+            {% endif %}
+
+            <h1>Countries</h1>
 
             {% for country in countries %}
             <a href = "#"> <p>{{country.name}}</p></a>
             {% endfor %}
         </div>
         <div class="col-md-6" align="left">
-        <h1>Latest Cities Catalog</h1>
+
+            {% if user %}
+            <a href="{{ url_for('add_city') }}"><button class="btn btn-success">Add New City</button></a>
+            {% endif %}
+
+            <h1>Latest Cities Catalog</h1>
 
             {% for item in items %}
             <a href = "#"> <p>{{item.name}}</p></a>
@@ -58,17 +57,5 @@
         </div>
     </div>
 </main>
-    <!--  JavaScript for Bootstrap -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
-            integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
-            crossorigin="anonymous"></script>
-</body>
 
-</html>
+{% endblock %}

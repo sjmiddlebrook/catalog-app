@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}Add City{% endblock %}
+
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+    <div class="col-md-6">
+    <h1>New City</h1>
+
+    <form action="#" method="post" id="new_city_form">
+        <div class="form-group">
+            <label for="name_text">Name:</label>
+            <input id="name_text" type="text" size="30" name="name">
+        </div>
+        <div class="form-group">
+            <label for="description_area">Description:</label>
+            <textarea id="description_area" class="form-control" form="new_city_form" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="country_select">Country:</label>
+            <select id="country_select" name="country">
+                {% for country in countries %}
+                <option value="{{ country.name }}">{{ country.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <input type="submit" value="Create">
+    </form>
+    </div>
+    </div>
+</main>
+{% endblock %}

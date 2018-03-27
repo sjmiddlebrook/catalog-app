@@ -1,10 +1,13 @@
 import random
 import string
 import json
+from datetime import datetime
+
 import requests
 import httplib2
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, make_response
+from flask import Flask, render_template, jsonify, request, redirect, url_for, \
+    flash, make_response
 from flask import session as login_session
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
@@ -16,7 +19,6 @@ from oauth2client.client import FlowExchangeError
 
 app = Flask(__name__)
 
-
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Travel Catalog Application"
@@ -27,12 +29,6 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
-
-@app.route('/')
-@app.route('/hello')
-def hello_world():
-    return 'Hello, Test!'
 
 
 # Create a state token to prevent request forgery
@@ -99,8 +95,9 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'),
+            200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -118,17 +115,8 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
-    print("done!")
-    return output
+    flash("you are now logged in as {}".format(login_session['username']))
+    return "successful login"
 
 
 @app.route('/gdisconnect')
@@ -136,13 +124,15 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps('Current user not connected.'),
+            401)
         response.headers['Content-Type'] = 'application/json'
         return redirect(url_for('show_categories'))
     print('In gdisconnect access token is {}'.format(access_token))
     print('User name is: ')
     print(login_session['username'])
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % \
+          login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print('result is ')
@@ -158,7 +148,8 @@ def gdisconnect():
         flash("you are now logged out.")
         return redirect(url_for('show_categories'))
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -183,18 +174,56 @@ def countries_json():
 
 
 # Show all categories
+@app.route('/')
 @app.route('/countries/')
 def show_categories():
     countries = session.query(Country).all()
-    city_catalog_items = session.query(CatalogItem).order_by(desc(CatalogItem.last_update)).all()
-    # check for username
+    # select cities with latest updated cities first
+    city_catalog_items = session.query(CatalogItem).order_by(
+        desc(CatalogItem.last_update)).all()
+    # check user is logged in
     if 'username' in login_session.keys():
         user = login_session['username']
     else:
         user = None
-    # return "This page will show all my restaurants"
     return render_template('countries.html', countries=countries,
-        items=city_catalog_items, user=user)
+                           items=city_catalog_items, user=user)
+
+
+# Add a new country
+@app.route('/countries/new/', methods=['GET', 'POST'])
+def add_country():
+    if request.method == 'POST':
+        new_country = Country(name=request.form['name'])
+        session.add(new_country)
+        session.commit()
+        return redirect(url_for('show_categories'))
+    else:
+        return render_template('newCountry.html')
+
+
+# Add a new city
+@app.route('/cities/new/', methods=['GET', 'POST'])
+def add_city():
+    if request.method == 'POST':
+        country = session.query(Country).filter(
+            Country.name == request.form['country']).first()
+        new_city = CatalogItem(name=request.form['name'],
+                               description=request.form['description'],
+                               last_update=datetime.now(),
+                               country=country)
+        session.add(new_city)
+        session.commit()
+        return redirect(url_for('show_categories'))
+    else:
+        countries = session.query(Country).all()
+        return render_template('newCity.html', countries=countries)
+
+
+@app.route('/clearSession')
+def clear_session():
+    login_session.clear()
+    return "Session cleared"
 
 
 if __name__ == '__main__':
