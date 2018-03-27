@@ -138,7 +138,7 @@ def gdisconnect():
         print('Access Token is None')
         response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
-        return response
+        return redirect(url_for('show_categories'))
     print('In gdisconnect access token is {}'.format(access_token))
     print('User name is: ')
     print(login_session['username'])
@@ -155,7 +155,8 @@ def gdisconnect():
         del login_session['picture']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
-        return response
+        flash("you are now logged out.")
+        return redirect(url_for('show_categories'))
     else:
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
