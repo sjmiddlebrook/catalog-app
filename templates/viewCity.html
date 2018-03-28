@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 
-{% block title %}View City{% endblock %}
+{% block title %}{{ city.name }}{% endblock %}
 
 {% block content %}
 <main class="container-fluid">
     <div class="row">
-    <div class="col-md-6">
-    <h1>{{ city.name }}</h1>
-    <p>{{ city.description }}</p>
-
-    </div>
+        <div class="col-md-6">
+            <h1>City: {{ city.name }}</h1>
+            <h3>Country: {{ country.name }}</h3>
+            <p>Description: {{ city.description }}</p>
+        </div>
     </div>
 </main>
 {% endblock %}

@@ -224,7 +224,17 @@ def add_city():
 @app.route('/cities/<int:city_id>/')
 def view_city(city_id):
     city = session.query(CatalogItem).filter_by(id=city_id).first()
-    return render_template('viewCity.html', city=city)
+    country = session.query(Country).filter_by(id=city.country_id).first()
+    return render_template('viewCity.html', city=city, country=country)
+
+
+# View a city
+@app.route('/countries/<int:country_id>/')
+def view_country_cities(country_id):
+    country = session.query(Country).filter_by(id=country_id).first()
+    cities = session.query(CatalogItem).filter_by(country_id=country_id).all()
+    return render_template('viewCountryCities.html', country=country,
+                           cities=cities)
 
 
 @app.route('/clearSession')

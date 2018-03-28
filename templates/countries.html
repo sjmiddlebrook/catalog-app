@@ -39,7 +39,7 @@
             <h1>Countries</h1>
 
             {% for country in countries %}
-            <a href = "#"> <p>{{country.name}}</p></a>
+            <a href = "{{ url_for('view_country_cities', country_id=country.id) }}"> <p>{{country.name}}</p></a>
             {% endfor %}
         </div>
         <div class="col-md-6" align="left">
