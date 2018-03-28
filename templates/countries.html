@@ -51,7 +51,7 @@
             <h1>Latest Cities Catalog</h1>
 
             {% for item in items %}
-            <a href = "#"> <p>{{item.name}}</p></a>
+            <a href = "{{ url_for('view_city', city_id=item.id) }}"> <p>{{item.name}}</p></a>
             {% endfor %}
 
         </div>

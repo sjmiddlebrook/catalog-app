@@ -220,6 +220,13 @@ def add_city():
         return render_template('newCity.html', countries=countries)
 
 
+# View a city
+@app.route('/cities/<int:city_id>/')
+def view_city(city_id):
+    city = session.query(CatalogItem).filter_by(id=city_id).first()
+    return render_template('viewCity.html', city=city)
+
+
 @app.route('/clearSession')
 def clear_session():
     login_session.clear()
