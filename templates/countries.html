@@ -4,17 +4,7 @@
 
 {% block content %}
 
-<header class="navbar navbar-expand navbar-dark justify-content-between bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">Travel Catalog</a>
-        {% if user %}
-        <a href="{{ url_for('gdisconnect') }}"><button class="btn btn-primary">Logout</button></a>
-        {% else %}
-        <a href="{{ url_for('show_login') }}"><button class="btn btn-primary">Login</button></a>
-        {% endif %}
 
-    </div>
-</header>
 
 <main class="container-fluid">
     {% with messages = get_flashed_messages() %}

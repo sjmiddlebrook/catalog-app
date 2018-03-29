@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Country</title>
-</head>
-<body>
-    <h1>New Country</h1>
+{% extends "layout.html" %}
 
-    <form action="#" method = 'post'>
+{% block title %}Travel Catalog{% endblock %}
+
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+    <div class="col-md-6">
+        <h1>New Country</h1>
+
+        <form action="#" method = 'post'>
 
         <p>Name:</p>
         <input type ='text' size='30' name='name'>
         <input type='submit' value='Create'>
 
     </form>
-</body>
-</html>
+    </div>
+    </div>
+</main>
+{% endblock %}

@@ -194,7 +194,11 @@ def add_country():
         session.commit()
         return redirect(url_for('show_categories'))
     else:
-        return render_template('newCountry.html')
+        if 'username' in login_session.keys():
+            user = login_session['username']
+        else:
+            user = None
+        return render_template('newCountry.html', user=user)
 
 
 # Add a new city
@@ -212,7 +216,11 @@ def add_city():
         return redirect(url_for('show_categories'))
     else:
         countries = session.query(Country).all()
-        return render_template('newCity.html', countries=countries)
+        if 'username' in login_session.keys():
+            user = login_session['username']
+        else:
+            user = None
+        return render_template('newCity.html', countries=countries, user=user)
 
 
 # View a city
@@ -220,7 +228,13 @@ def add_city():
 def view_city(city_id):
     city = session.query(CatalogItem).filter_by(id=city_id).first()
     country = session.query(Country).filter_by(id=city.country_id).first()
-    return render_template('viewCity.html', city=city, country=country)
+    # check user is logged in
+    if 'username' in login_session.keys():
+        user = login_session['username']
+    else:
+        user = None
+    return render_template('viewCity.html', city=city, country=country,
+                           user=user)
 
 
 # View a city
@@ -228,8 +242,12 @@ def view_city(city_id):
 def view_country_cities(country_id):
     country = session.query(Country).filter_by(id=country_id).first()
     cities = session.query(CatalogItem).filter_by(country_id=country_id).all()
+    if 'username' in login_session.keys():
+        user = login_session['username']
+    else:
+        user = None
     return render_template('viewCountryCities.html', country=country,
-                           cities=cities)
+                           cities=cities, user=user)
 
 
 @app.route('/clearSession')
