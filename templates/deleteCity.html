@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}Delete {{city.name}}{% endblock %}
+
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+    <div class="col-md-6">
+    <h1>Delete City</h1>
+    <p>Are you sure you want to delete {{ city.name }}?</p>
+    <form action="#" method="post">
+        <input class="btn btn-danger" type="submit" value="Delete">
+    </form>
+    </div>
+    </div>
+</main>
+{% endblock %}

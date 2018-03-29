@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit {{city.name}}{% endblock %}
+
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+    <div class="col-md-6">
+    <h1>Edit City</h1>
+
+    <form action="#" method="post" id="edit_city_form">
+        <div class="form-group">
+            <label for="name_text">Name:</label>
+            <input id="name_text" type="text" size="30" name="name" value="{{city.name}}">
+        </div>
+        <div class="form-group">
+            <label for="description_area">Description:</label>
+            <textarea id="description_area" class="form-control"
+                      form="edit_city_form" name="description">{{city.description}}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="country_select">Country:</label>
+            <select id="country_select" name="country">
+                {% for country in countries %}
+                    {% if city.country_id == country.id %}
+                    <option value="{{ country.name }}" selected>{{ country.name }}</option>
+                    {% else %}
+                    <option value="{{ country.name }}">{{ country.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <input type="submit" value="Update City">
+    </form>
+    </div>
+    </div>
+</main>
+{% endblock %}

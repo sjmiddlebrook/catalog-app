@@ -223,6 +223,45 @@ def add_city():
         return render_template('newCity.html', countries=countries, user=user)
 
 
+# Edit an existing city
+@app.route('/cities/<int:city_id>/edit/', methods=['GET', 'POST'])
+def edit_city(city_id):
+    city = session.query(CatalogItem).filter_by(id=city_id).first()
+    if request.method == 'POST':
+        country = session.query(Country).filter(
+            Country.name == request.form['country']).first()
+        city.name = request.form['name']
+        city.description = request.form['description']
+        city.last_update = datetime.now()
+        city.country = country
+        session.commit()
+        return redirect(url_for('show_categories'))
+    else:
+        countries = session.query(Country).all()
+        if 'username' in login_session.keys():
+            user = login_session['username']
+        else:
+            user = None
+        return render_template('editCity.html', countries=countries, city=city,
+                               user=user)
+
+
+# Delete an existing city
+@app.route('/cities/<int:city_id>/delete/', methods=['GET', 'POST'])
+def delete_city(city_id):
+    city = session.query(CatalogItem).filter_by(id=city_id).first()
+    if request.method == 'POST':
+        session.delete(city)
+        session.commit()
+        return redirect(url_for('show_categories'))
+    else:
+        if 'username' in login_session.keys():
+            user = login_session['username']
+        else:
+            user = None
+        return render_template('deleteCity.html', city=city, user=user)
+
+
 # View a city
 @app.route('/cities/<int:city_id>/')
 def view_city(city_id):
