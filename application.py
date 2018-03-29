@@ -6,8 +6,8 @@ from datetime import datetime
 import requests
 import httplib2
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, \
-    flash, make_response
+from flask import Flask, render_template, jsonify, request, redirect, \
+    url_for, flash, make_response
 from flask import session as login_session
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
@@ -125,7 +125,7 @@ def gdisconnect():
     if access_token is None:
         print('Access Token is None')
         response = make_response(json.dumps('Current user not connected.'),
-            401)
+                                 401)
         response.headers['Content-Type'] = 'application/json'
         return redirect(url_for('show_categories'))
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % \
