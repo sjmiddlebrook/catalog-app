@@ -162,6 +162,12 @@ def country_cities_json(country_id):
     return jsonify(Cities=[i.serialize for i in cities])
 
 
+@app.route('/cities/<int:city_id>/JSON')
+def city_json(city_id):
+    city = session.query(CatalogItem).filter_by(id=city_id).one()
+    return jsonify(City=city.serialize)
+
+
 @app.route('/countries/JSON')
 def countries_json():
     countries = session.query(Country).all()
