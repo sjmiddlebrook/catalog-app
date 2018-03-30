@@ -8,11 +8,22 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    picture = Column(String(250))
+
+
 class Country(Base):
     __tablename__ = 'country'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -32,6 +43,8 @@ class CatalogItem(Base):
     last_update = Column(DateTime)
     country_id = Column(Integer, ForeignKey('country.id'))
     country = relationship(Country)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -45,6 +58,5 @@ class CatalogItem(Base):
 
 
 engine = create_engine('sqlite:///catalog.db')
-
 
 Base.metadata.create_all(engine)
