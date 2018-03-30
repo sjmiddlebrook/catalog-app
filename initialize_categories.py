@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Country, Base, CatalogItem
+from database_setup import Country, Base, CatalogItem, User
 
 engine = create_engine('sqlite:///catalog.db')
 # Bind the engine to the metadata of the Base class so that the
@@ -20,21 +20,27 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
+# Create initial user for database
+User1 = User(name="Test User", email="test@user.com",
+             picture='https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg')
+session.add(User1)
+session.commit()
+
 # Country category for Belgium
-belgium = Country(name="Belgium")
+belgium = Country(name="Belgium", user_id=1)
 
 session.add(belgium)
 session.commit()
 
 
 # Country category for Portugal
-portugal = Country(name="Portugal")
+portugal = Country(name="Portugal", user_id=1)
 
 session.add(portugal)
 session.commit()
 
 # Country category for Hungary
-hungary = Country(name="Hungary")
+hungary = Country(name="Hungary", user_id=1)
 
 session.add(hungary)
 session.commit()
@@ -42,7 +48,8 @@ session.commit()
 bruges_city_catalog = CatalogItem(name="Bruges",
     description="Historic city with canals, beer, chocolate, and waffles",
     last_update=datetime.now(),
-    country=belgium)
+    country=belgium,
+    user_id=1)
 
 session.add(bruges_city_catalog)
 session.commit()
@@ -50,7 +57,8 @@ session.commit()
 lisbon_city_catalog = CatalogItem(name="Lisbon",
     description="Hilly city with trams, pastries, and seafood",
     last_update=datetime.now(),
-    country=portugal)
+    country=portugal,
+    user_id=1)
 
 session.add(lisbon_city_catalog)
 session.commit()
@@ -58,7 +66,8 @@ session.commit()
 lagos_city_catalog = CatalogItem(name="Lagos",
     description="Coastal city with beautiful beaches, hiking, and water sports",
     last_update=datetime.now(),
-    country=portugal)
+    country=portugal,
+    user_id=1)
 
 session.add(lagos_city_catalog)
 session.commit()
@@ -66,7 +75,8 @@ session.commit()
 budapest_city_catalog = CatalogItem(name="Budapest",
     description="Beautiful city with Thermal baths, ruin pubs and castle",
     last_update=datetime.now(),
-    country=hungary)
+    country=hungary,
+    user_id=1)
 
 session.add(budapest_city_catalog)
 session.commit()
