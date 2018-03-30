@@ -12,7 +12,7 @@ from flask import session as login_session
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Base, Country, CatalogItem
+from database_setup import Base, Country, CatalogItem, User
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -115,6 +115,13 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+
+    # see if user exists, if not make a new user
+    user_id = get_user_id(login_session['email'])
+    if not user_id:
+        user_id = create_user(login_session)
+    login_session['user_id'] = user_id
+
     flash("you are now logged in as {}".format(login_session['username']))
     return "successful login"
 
@@ -194,8 +201,11 @@ def show_categories():
 # Add a new country
 @app.route('/countries/new/', methods=['GET', 'POST'])
 def add_country():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
-        new_country = Country(name=request.form['name'])
+        new_country = Country(name=request.form['name'],
+                              user_id=login_session['user_id'])
         session.add(new_country)
         session.commit()
         return redirect(url_for('show_categories'))
@@ -210,13 +220,16 @@ def add_country():
 # Add a new city
 @app.route('/cities/new/', methods=['GET', 'POST'])
 def add_city():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         country = session.query(Country).filter(
             Country.name == request.form['country']).first()
         new_city = CatalogItem(name=request.form['name'],
                                description=request.form['description'],
                                last_update=datetime.now(),
-                               country=country)
+                               country=country,
+                               user_id=login_session['user_id'])
         session.add(new_city)
         session.commit()
         return redirect(url_for('show_categories'))
@@ -232,7 +245,12 @@ def add_city():
 # Edit an existing city
 @app.route('/cities/<int:city_id>/edit/', methods=['GET', 'POST'])
 def edit_city(city_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     city = session.query(CatalogItem).filter_by(id=city_id).first()
+    if login_session['user_id'] != city.user_id:
+        flash("you are not authorized to edit this city")
+        return redirect(url_for('view_city', city_id=city_id))
     if request.method == 'POST':
         country = session.query(Country).filter(
             Country.name == request.form['country']).first()
@@ -255,7 +273,12 @@ def edit_city(city_id):
 # Delete an existing city
 @app.route('/cities/<int:city_id>/delete/', methods=['GET', 'POST'])
 def delete_city(city_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     city = session.query(CatalogItem).filter_by(id=city_id).first()
+    if login_session['user_id'] != city.user_id:
+        flash("you are not authorized to delete this city")
+        return redirect(url_for('view_city', city_id=city_id))
     if request.method == 'POST':
         session.delete(city)
         session.commit()
@@ -282,7 +305,7 @@ def view_city(city_id):
                            user=user)
 
 
-# View a city
+# View cities related to a single country
 @app.route('/countries/<int:country_id>/')
 def view_country_cities(country_id):
     country = session.query(Country).filter_by(id=country_id).first()
@@ -299,6 +322,30 @@ def view_country_cities(country_id):
 def clear_session():
     login_session.clear()
     return "Session cleared"
+
+
+def create_user(user_login_session):
+    new_user = User(name=user_login_session['username'],
+                    email=user_login_session['email'],
+                    picture=user_login_session['picture'])
+    session.add(new_user)
+    session.commit()
+    user = session.query(User).filter_by(
+        email=user_login_session['email']).one()
+    return user
+
+
+def get_user_info(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def get_user_id(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 if __name__ == '__main__':
