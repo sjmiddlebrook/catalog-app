@@ -3,3 +3,4 @@ __pycache__/
 catalog.db
 client_secrets.json
 database_setup.pyc
+requirements.txt
